@@ -1,0 +1,7 @@
+account.json
+.terraform
+*tfstate*
+*.pem
+*.csr
+bastion
+bastion.pub
