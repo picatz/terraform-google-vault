@@ -200,4 +200,4 @@ Create Index = 138
 Modify Index = 138
 ```
 
-Nomad access configuration options listed [here](https://github.com/hashicorp/vault/blob/7c6d12ffb40d8918f01e702ec4d5d0c39a975905/builtin/logical/nomad/path_config_access.go#L13).
+Nomad access configuration options listed [here](https://www.vaultproject.io/api/secret/nomad#nomad-secret-backend-http-api).
