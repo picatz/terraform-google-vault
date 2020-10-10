@@ -5,3 +5,6 @@ account.json
 *.csr
 bastion
 bastion.pub
+*role.json
+*config.json
+*payload.json

@@ -1,0 +1,49 @@
+{
+    "variables": {
+        "project": "{{env `GOOGLE_PROJECT`}}",
+        "account_file": "{{env `GOOGLE_APPLICATION_CREDENTIALS`}}",
+        "zone": "us-east1-b",
+        "disk_size_gb": "10",
+        "source_image_family": "ubuntu-1804-lts",
+        "use_iap": "false",
+        "use_preemptible": "false"
+    },
+    "builders": [
+        {
+            "name": "vault",
+            "type": "googlecompute",
+            "account_file": "{{user `account_file`}}",
+            "project_id": "{{user `project`}}",
+            "source_image_family": "{{user `source_image_family`}}",
+            "image_description": "HashiCorp Vault server image",
+            "image_name": "vault",
+            "disk_size": "{{user `disk_size_gb`}}",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "ubuntu",
+            "zone": "{{user `zone`}}",
+            "use_iap": "{{user `use_iap`}}",
+            "preemptible": "{{user `use_preemptible`}}"
+        }
+    ],
+    "provisioners": [
+        {
+			"type": "file",
+			"source": "configs/vault/agent.hcl",
+			"destination": "/tmp/agent.hcl"
+		},
+		{
+			"type": "file",
+			"source": "configs/vault/vault.service",
+			"destination": "/tmp/vault.service"
+		},
+		{
+			"type": "shell",
+			"scripts": [
+				"scripts/install_required_packages.sh",
+                "scripts/install_vault.sh",
+				"scripts/install_stack_driver_agents.sh"
+			]
+        }
+    ]
+}

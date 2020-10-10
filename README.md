@@ -1,3 +1,203 @@
 # Vault Cluster
 
 [Terraform](https://www.terraform.io/) Module for [Vault](https://www.vaultproject.io/) clusters on [GCP](https://cloud.google.com/).
+
+## Module Developer Workflow
+
+```console
+$ gcloud services enable compute.googleapis.com
+...
+```
+
+```console
+$ gcloud services enable iam.googleapis.com
+...
+```
+
+```console
+$ export GOOGLE_PROJECT="..."
+$ export GOOGLE_APPICATION_CREDENTIALS="$(realpath ...)"
+$ make packer/validate
+...
+$ make packer/build
+...
+$ make terraform/validate
+...
+$ make terraform/plan
+...
+$ make terraform/apply
+...
+$ make terraform/output/vault/certs
+...
+$ terraform output load_balancer_ip
+...
+$ export VAULT_ADDR="https://$(terraform output load_balancer_ip):443"
+$ export VAULT_CACERT="$(realpath vault_ca_cert.pem)"
+$ export VAULT_CLIENT_CERT="$(realpath vault_cli_cert.pem)"
+$ export VAULT_CLIENT_KEY="$(realpath vault_cli_key.pem)"
+$ vault status
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        false
+Sealed             true
+Total Shares       0
+Threshold          0
+Unseal Progress    0/0
+Unseal Nonce       n/a
+Version            n/a
+HA Enabled         true
+$ vault operator init
+Unseal Key 1: 3XCK7VkEw1TeGvEJW7QQtFw+3+HY8xlIRz5JEcY/CAom
+Unseal Key 2: AceqBe9GaOhkBAkeaMEqVrMzgW7paC7YvUrmS6hYatFK
+Unseal Key 3: /c6+8CEItwKFk7q9yFr6qQBWTjq9+QmlDokC82zy3mgr
+Unseal Key 4: raxKXKh2qCNLP5GiUc4iURIgS1wCDgx+I3fWwNzdIGx0
+Unseal Key 5: 2PC7LdgF9UYd624BAx1FvD3QI3TQ9pE9NcXHn7yXRW3a
+
+Initial Root Token: s.SZTm4Z4jYUUeeyZzNTfgpGOc
+
+Vault initialized with 5 key shares and a key threshold of 3. Please securely
+distribute the key shares printed above. When the Vault is re-sealed,
+restarted, or stopped, you must supply at least 3 of these keys to unseal it
+before it can start servicing requests.
+
+Vault does not store the generated master key. Without at least 3 key to
+reconstruct the master key, Vault will remain permanently sealed!
+
+It is possible to generate new unseal keys, provided you have a quorum of
+existing unseal keys shares. See "vault operator rekey" for more information.
+$ export VAULT_TOKEN="s.SZTm4Z4jYUUeeyZzNTfgpGOc"
+$ vault status
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    0/3
+Unseal Nonce       n/a
+Version            1.5.0
+HA Enabled         true
+$ vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       87cdd42f-a3f1-544f-f805-c836271540e8
+Version            1.5.0
+HA Enabled         true
+$ vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       87cdd42f-a3f1-544f-f805-c836271540e8
+Version            1.5.0
+HA Enabled         true
+$ vault operator unseal
+Unseal Key (will be hidden):
+Key                    Value
+---                    -----
+Seal Type              shamir
+Initialized            true
+Sealed                 false
+Total Shares           5
+Threshold              3
+Version                1.5.0
+Cluster Name           vault-cluster-3aa19181
+Cluster ID             6e8e8376-76d4-26b4-ff0a-6a7283defb15
+HA Enabled             true
+HA Cluster             n/a
+HA Mode                standby
+Active Node Address    <none>
+$ vault auth enable ...
+```
+
+## GitHub Authn
+
+```console
+$ export GITHUB_ORG="..."
+$ export GITHUB_TOKEN="..."
+$ vault auth enable github
+...
+$ vault write auth/github/config organization=$GITHUB_ORG
+...
+$ vault login -method=github token=$GITHUB_TOKEN
+...
+Key                    Value
+---                    -----
+token                  s.JFo4k2okFKOWFWK34592eS
+token_accessor         KRFJWWJFOFDMKCMVNodf3400
+token_duration         768h
+token_renewable        true
+token_policies         ["default"]
+identity_policies      []
+policies               ["default"]
+token_meta_org         whatever-it-is
+token_meta_username    whoever-it-is
+$ export VAULT_TOKEN="s.JFo4k2okFKOWFWK34592eS"
+```
+
+## OIDC Authn
+
+```console
+$ vault auth enable oidc
+$ vault write auth/oidc/role/default allowed_redirect_uris="http://localhost:8400/oidc/callback" groups_claim="groups" oidc_scopes="profile" policies="default"
+$ tee oidc_config.json <<EOF
+{
+   "oidc_client_id": "...",
+   "oidc_client_secret": "...",
+   "default_role": "default",
+   "oidc_discovery_url": "https://accounts.google.com",
+   "verbose_oidc_logging": true
+}
+EOF
+$ curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data @oidc_config.json http://127.0.0.1:8200/v1/auth/oidc/config
+$ vault login -method=oidc port=8400 role=default
+```
+
+### Enabling Nomad Secrets Engine
+
+```console
+$ vault secrets enable nomad
+$ vault write nomad/config/access \
+    address=$NOMAD_ADDR \
+    token=$NOMAD_TOKEN \
+    ca_cert="$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $NOMAD_CA)" \
+    client_cert="$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $NOMAD_CERT)" \
+    client_cert="$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $NOMAD_KEY)"
+...
+$ vault write nomad/role/monitoring policies=readonly
+...
+$ vault read nomad/creds/monitoring
+Key              Value
+---              -----
+lease_id         nomad/creds/monitoring/78ec3ef3-c806-1022-4aa8-1dbae39c760c
+lease_duration   768h0m0s
+lease_renewable  true
+accessor_id      a715994d-f5fd-1194-73df-ae9dad616307
+secret_id        b31fb56c-0936-5428-8c5f-ed010431aba9
+$ nomad acl token info a715994d-f5fd-1194-73df-ae9dad616307
+Accessor ID  = a715994d-f5fd-1194-73df-ae9dad616307
+Secret ID    = b31fb56c-0936-5428-8c5f-ed010431aba9
+Name         = Vault example root 1505945527022465593
+Type         = client
+Global       = false
+Policies     = [readonly]
+Create Time  = 2017-09-20 22:12:07.023455379 +0000 UTC
+Create Index = 138
+Modify Index = 138
+```
+
+Nomad access configuration options listed [here](https://github.com/hashicorp/vault/blob/7c6d12ffb40d8918f01e702ec4d5d0c39a975905/builtin/logical/nomad/path_config_access.go#L13).
