@@ -204,7 +204,9 @@ $ curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data @oidc_config
 $ vault login -method=oidc port=8400 role=default
 ```
 
-### Enabling Nomad Secrets Engine
+### Secrets Engines
+
+#### Nomad
 
 ```console
 $ vault secrets enable nomad
@@ -238,3 +240,40 @@ Modify Index = 138
 ```
 
 Nomad access configuration options listed [here](https://www.vaultproject.io/api/secret/nomad#nomad-secret-backend-http-api).
+
+#### TOTP
+
+```console
+$ vault secrets enable totp
+...
+```
+
+To use Vault as a generator (like Google Authenticator):
+
+```console
+$ vault write totp/keys/my-key url="otpauth://totp/Vault:test@test.com?secret=Y64VEVMBTSXCYIWRSHRNDZW62MPGVU2G&issuer=Vault"
+...
+$ vault read totp/code/my-key
+Key     Value
+---     -----
+code    260610
+```
+
+To use Vault as a provider (for your own service to support TOTP):
+
+```console
+$ vault secrets enable totp
+...
+$ vault write totp/keys/my-user \
+    generate=true \
+    issuer=Vault \
+    account_name=user@test.com
+Key        Value
+---        -----
+barcode    iVBORw0KGgoAAAANSUhEUgAAAMgAAADIEAAAAADYoy0BA...
+url        otpauth://totp/Vault:user@test.com?algorithm=SHA1&digits=6&issuer=Vault&period=30&secret=V7MBSK324I7KF6KVW34NDFH2GYHIF6JY
+$ vault write totp/code/my-user code=886531
+Key      Value
+---      -----
+valid    true
+```
