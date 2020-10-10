@@ -137,7 +137,7 @@ $ vault read auth/github/config
 Key                        Value
 ---                        -----
 base_url                   n/a
-organization               misec-ctf
+organization               ...
 token_bound_cidrs          []
 token_explicit_max_ttl     0s
 token_max_ttl              0s
