@@ -133,6 +133,43 @@ $ vault auth enable github
 ...
 $ vault write auth/github/config organization=$GITHUB_ORG
 ...
+$ vault read auth/github/config
+Key                        Value
+---                        -----
+base_url                   n/a
+organization               misec-ctf
+token_bound_cidrs          []
+token_explicit_max_ttl     0s
+token_max_ttl              0s
+token_no_default_policy    false
+token_num_uses             0
+token_period               0s
+token_policies             []
+token_ttl                  0s
+token_type                 default
+$ curl --key vault_cli_key.pem --cert vault_cli_cert.pem  --cacert vault_ca_cert.pem --header "X-Vault-Token: $VAULT_TOKEN" https://34.120.163.67:443/v1/auth/github/config
+{
+  "request_id": "1280fb3d-a650-168d-049e-055a2e17ffc2",
+  "lease_id": "",
+  "renewable": false,
+  "lease_duration": 0,
+  "data": {
+    "base_url": "",
+    "organization": "...",
+    "token_bound_cidrs": [],
+    "token_explicit_max_ttl": 0,
+    "token_max_ttl": 0,
+    "token_no_default_policy": false,
+    "token_num_uses": 0,
+    "token_period": 0,
+    "token_policies": [],
+    "token_ttl": 0,
+    "token_type": "default"
+  },
+  "wrap_info": null,
+  "warnings": null,
+  "auth": null
+}
 $ vault login -method=github token=$GITHUB_TOKEN
 ...
 Key                    Value
