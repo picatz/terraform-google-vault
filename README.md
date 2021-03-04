@@ -31,10 +31,21 @@ $ make terraform/output/vault/certs
 ...
 $ terraform output load_balancer_ip
 ...
-$ export VAULT_ADDR="https://$(terraform output load_balancer_ip):443"
-$ export VAULT_CACERT="$(realpath vault_ca_cert.pem)"
-$ export VAULT_CLIENT_CERT="$(realpath vault_cli_cert.pem)"
-$ export VAULT_CLIENT_KEY="$(realpath vault_cli_key.pem)"
+wait 3-5 minutes for everything to be ready
+...
+
+Apply complete! Resources: 28 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+load_balancer_ip = "..."
+vault_backend_bucket = "..."
+vault_ca_cert = <sensitive>
+vault_cli_cert = <sensitive>
+$ export VAULT_ADDR="https://$(terraform output -raw load_balancer_ip):443"
+$ export VAULT_CACERT="$(realpath vault-ca.pem)"
+$ export VAULT_CLIENT_CERT="$(realpath vault-cli-cert.pem)"
+$ export VAULT_CLIENT_KEY="$(realpath vault-cli-key.pem)"
 $ vault status
 Key                Value
 ---                -----
