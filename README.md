@@ -34,14 +34,15 @@ $ terraform output load_balancer_ip
 wait 3-5 minutes for everything to be ready
 ...
 
-Apply complete! Resources: 28 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 31 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-load_balancer_ip = "..."
-vault_backend_bucket = "..."
+load_balancer_ip = "<public_ip>"
+vault_backend_bucket = "<bucket_name>"
 vault_ca_cert = <sensitive>
 vault_cli_cert = <sensitive>
+vault_cli_key = <sensitive>
 $ export VAULT_ADDR="https://$(terraform output -raw load_balancer_ip):443"
 $ export VAULT_CACERT="$(realpath vault-ca.pem)"
 $ export VAULT_CLIENT_CERT="$(realpath vault-cli-cert.pem)"
