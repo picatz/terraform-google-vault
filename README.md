@@ -218,7 +218,8 @@ $ vault write auth/oidc/role/gmail -<<EOF
   "oidc_scopes": ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
   "bound_audiences": "$OIDC_CLIENT_ID",
   "bound_claims": {
-    "email": ["$YOUR_GMAIL_GOES_HERE@gmail.com"]
+    "email": ["kent.picat.gruber@gmail.com"],
+    "email_verified": true
   }
 }
 EOF
