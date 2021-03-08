@@ -210,12 +210,18 @@ $ vault write auth/oidc/config \
     oidc_client_id="$OIDC_CLIENT_ID" \
     oidc_client_secret="$OIDC_CLIENT_SECRET" \
     default_role="gmail"
-$ vault write auth/oidc/role/gmail \
-    user_claim="sub" \
-    bound_audiences="$OIDC_CLIENT_ID" \
-    allowed_redirect_uris="https://$VAULT_ADDR:443/ui/vault/auth/oidc/oidc/callback,http://localhost:8250/oidc/callback" \
-    policies=demo \
-    ttl=1h
+$ vault write auth/oidc/role/gmail -<<EOF
+{
+  "allowed_redirect_uris": ["https://$VAULT_ADDR:443/ui/vault/auth/oidc/oidc/callback","http://localhost:8250/oidc/callback"],
+  "policies":"demo",
+  "user_claim": "sub",
+  "oidc_scopes": ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
+  "bound_audiences": "$OIDC_CLIENT_ID",
+  "bound_claims": {
+    "email": ["$YOUR_GMAIL_GOES_HERE@gmail.com"]
+  }
+}
+EOF
 ```
 
 Read more about this authentication method [here](https://github.com/hashicorp/vault-guides/tree/master/identity/oidc-auth#configure-vault).
