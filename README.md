@@ -16,7 +16,7 @@ $ gcloud services enable iam.googleapis.com
 
 ```console
 $ export GOOGLE_PROJECT="..."
-$ export GOOGLE_APPICATION_CREDENTIALS="$(realpath ...)"
+$ export GOOGLE_APPLICATION_CREDENTIALS="$(realpath ...)"
 $ make packer/validate
 ...
 $ make packer/build
