@@ -198,22 +198,24 @@ token_meta_username    whoever-it-is
 $ export VAULT_TOKEN="s.JFo4k2okFKOWFWK34592eS"
 ```
 
-## OIDC Authn
+## OIDC Authn using Google OAuth with Gmail Login
 
 ```console
+$ export VAULT_ADDR=$(terraform output load_balancer_ip)
+$ export OIDC_CLIENT_ID="..."
+$ export OIDC_CLIENT_SECRET="..."
 $ vault auth enable oidc
-$ vault write auth/oidc/role/default allowed_redirect_uris="http://localhost:8400/oidc/callback" groups_claim="groups" oidc_scopes="profile" policies="default"
-$ tee oidc_config.json <<EOF
-{
-   "oidc_client_id": "...",
-   "oidc_client_secret": "...",
-   "default_role": "default",
-   "oidc_discovery_url": "https://accounts.google.com",
-   "verbose_oidc_logging": true
-}
-EOF
-$ curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST --data @oidc_config.json http://127.0.0.1:8200/v1/auth/oidc/config
-$ vault login -method=oidc port=8400 role=default
+$ vault write auth/oidc/config \
+    oidc_discovery_url="https://accounts.google.com" \
+    oidc_client_id="$OIDC_CLIENT_ID" \
+    oidc_client_secret="$OIDC_CLIENT_SECRET" \
+    default_role="gmail"
+$ vault write auth/oidc/role/gmail \
+    user_claim="sub" \
+    bound_audiences="$OIDC_CLIENT_ID" \
+    allowed_redirect_uris="https://$VAULT_ADDR:443/ui/vault/auth/oidc/oidc/callback,http://localhost:8250/oidc/callback" \
+    policies=demo \
+    ttl=1h
 ```
 
 ### Secrets Engines
