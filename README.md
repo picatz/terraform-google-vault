@@ -218,6 +218,8 @@ $ vault write auth/oidc/role/gmail \
     ttl=1h
 ```
 
+Read more about this authentication method [here](https://github.com/hashicorp/vault-guides/tree/master/identity/oidc-auth#configure-vault).
+
 ### Secrets Engines
 
 #### Nomad
