@@ -8,3 +8,4 @@ bastion.pub
 *role.json
 *config.json
 *payload.json
+vault-*
