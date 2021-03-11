@@ -27,10 +27,6 @@ $ make terraform/plan
 ...
 $ make terraform/apply
 ...
-$ make terraform/output/vault/certs
-...
-$ terraform output load_balancer_ip
-...
 wait 3-5 minutes for everything to be ready
 ...
 
@@ -218,7 +214,7 @@ $ vault write auth/oidc/role/gmail -<<EOF
   "oidc_scopes": ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
   "bound_audiences": "$OIDC_CLIENT_ID",
   "bound_claims": {
-    "email": ["kent.picat.gruber@gmail.com"],
+    "email": ["$YOUR_GMAIL_HERE@gmail.com"],
     "email_verified": true
   }
 }
