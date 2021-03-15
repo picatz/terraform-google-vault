@@ -219,6 +219,7 @@ $ vault write auth/oidc/role/gmail -<<EOF
   }
 }
 EOF
+$ vault login -method=oidc role=gmail
 ```
 
 Read more about this authentication method [here](https://github.com/hashicorp/vault-guides/tree/master/identity/oidc-auth#configure-vault).
