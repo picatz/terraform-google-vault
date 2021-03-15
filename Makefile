@@ -6,6 +6,7 @@ help:
 	@echo Required environment variables:
 	@echo "* GOOGLE_PROJECT (${GOOGLE_PROJECT})"
 	@echo "* GOOGLE_APPLICATION_CREDENTIALS (${GOOGLE_APPLICATION_CREDENTIALS})"
+	@echo "* VAULT_PUBLIC_DOMAIN (${VAULT_PUBLIC_DOMAIN})"
 	@echo
 	@echo 'Usage: make <target>'
 	@echo
@@ -35,6 +36,9 @@ terraform/validate: ## Validates the Terraform config
 terraform/plan: ## Runs the Terraform plan command
 	terraform plan \
 		-var="project=${GOOGLE_PROJECT}" \
+		-var="dns_enabled=true" \
+		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
+		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
 
 .PHONY: terraform/apply
@@ -42,6 +46,9 @@ terraform/apply: ## Runs and auto-apporves the Terraform apply command
 	terraform apply \
 		-auto-approve \
 		-var="project=${GOOGLE_PROJECT}" \
+		-var="dns_enabled=true" \
+		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
+		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
 
 .PHONY: terraform/destroy
@@ -49,4 +56,7 @@ terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
 	terraform destroy \
 		-auto-approve \
 		-var="project=${GOOGLE_PROJECT}" \
+		-var="dns_enabled=true" \
+		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
+		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"

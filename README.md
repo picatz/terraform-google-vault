@@ -197,7 +197,7 @@ $ export VAULT_TOKEN="s.JFo4k2okFKOWFWK34592eS"
 ## OIDC Authn using Google OAuth with Gmail Login
 
 ```console
-$ export VAULT_ADDR=$(terraform output load_balancer_ip)
+$ export VAULT_ADDR="https://$VAULT_DOMAIN_OR_IP_ADDRESS:$VAULT_PORT"
 $ export OIDC_CLIENT_ID="..."
 $ export OIDC_CLIENT_SECRET="..."
 $ vault auth enable oidc
@@ -208,8 +208,8 @@ $ vault write auth/oidc/config \
     default_role="gmail"
 $ vault write auth/oidc/role/gmail -<<EOF
 {
-  "allowed_redirect_uris": ["https://$VAULT_ADDR:443/ui/vault/auth/oidc/oidc/callback","http://localhost:8250/oidc/callback"],
-  "policies":"demo",
+  "allowed_redirect_uris": ["$VAULT_ADDR/ui/vault/auth/oidc/oidc/callback","http://localhost:8250/oidc/callback"],
+  "policies":"default",
   "user_claim": "sub",
   "oidc_scopes": ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
   "bound_audiences": "$OIDC_CLIENT_ID",

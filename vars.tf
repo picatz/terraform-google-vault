@@ -84,3 +84,18 @@ variable "bucket_location" {
   type    = string
   default = "US"
 }
+
+variable "dns_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "dns_managed_zone_dns_name" {
+  type    = string
+  default = ""
+}
+
+variable "dns_record_set_name_prefix" {
+  type    = string
+  default = "public"
+}

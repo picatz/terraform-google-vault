@@ -9,4 +9,3 @@ bastion.pub
 *config.json
 *payload.json
 vault-*
-dns.tf
