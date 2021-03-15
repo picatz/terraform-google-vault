@@ -155,7 +155,7 @@ token_period               0s
 token_policies             []
 token_ttl                  0s
 token_type                 default
-$ curl --key vault_cli_key.pem --cert vault_cli_cert.pem  --cacert vault_ca_cert.pem --header "X-Vault-Token: $VAULT_TOKEN" https://34.120.163.67:443/v1/auth/github/config
+$ curl --key vault_cli_key.pem --cert vault_cli_cert.pem  --cacert vault_ca_cert.pem --header "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/auth/github/config"
 {
   "request_id": "1280fb3d-a650-168d-049e-055a2e17ffc2",
   "lease_id": "",
