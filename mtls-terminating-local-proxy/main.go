@@ -111,7 +111,7 @@ func main() {
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			log.Fatalf("failed to accept new local proxy connection: %w", err)
+			log.Fatalf("failed to accept new local proxy connection: %v", err)
 		}
 
 		go func(conn net.Conn) {
