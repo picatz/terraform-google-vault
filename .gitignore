@@ -9,3 +9,4 @@ bastion.pub
 *config.json
 *payload.json
 vault-*
+auth/*
