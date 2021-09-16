@@ -132,6 +132,13 @@ Active Node Address    <none>
 $ vault auth enable ...
 ```
 
+## Admin Policy
+
+```console
+$ vault policy write admin policies/admin/policy.hcl
+Success! Uploaded policy: admin
+```
+
 ## GitHub Authn
 
 ```console
