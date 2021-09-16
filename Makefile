@@ -60,3 +60,7 @@ terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
+
+.PHONY: mtls/proxy
+mtls/proxy: ## Runs a local mTLS terminating proxy using github.com/picatz/mtls-proxy
+	@mtls-proxy -ca-file=$(realpath vault-ca.pem) -cert-file=$(realpath vault-cli-cert.pem) -key-file=$(realpath vault-cli-key.pem) -target-addr="$(shell terraform output -raw load_balancer_ip):443" -listener-addr="127.0.0.1:8200"
