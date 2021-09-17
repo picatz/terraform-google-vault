@@ -104,3 +104,9 @@ variable "dns_record_set_name_prefix" {
   type    = string
   default = "public"
 }
+
+variable "tls_validity_period_hours" {
+  type    = number
+  default = 17520
+  description = "The total number of hours the generated mTLS certificates are valid for with a default of 2 years"
+}
