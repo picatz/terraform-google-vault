@@ -26,3 +26,7 @@ output "load_balancer_ip" {
   value       = google_compute_global_address.vault_external.address
 }
 
+output "dns_name_servers" {
+  description = "Delegate your managed_zone to these virtual name servers if DNS is enabled"
+  value       = var.dns_enabled ? google_dns_managed_zone.vault[0].name_servers : []
+}
