@@ -85,6 +85,11 @@ variable "bucket_location" {
   default = "US"
 }
 
+variable "bucket_force_destroy" {
+  type    = bool
+  default = true
+}
+
 variable "dns_enabled" {
   type    = bool
   default = false

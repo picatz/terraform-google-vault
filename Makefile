@@ -37,6 +37,7 @@ terraform/plan: ## Runs the Terraform plan command
 	terraform plan \
 		-var="project=${GOOGLE_PROJECT}" \
 		-var="dns_enabled=true" \
+		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
@@ -47,6 +48,7 @@ terraform/apply: ## Runs and auto-apporves the Terraform apply command
 		-auto-approve \
 		-var="project=${GOOGLE_PROJECT}" \
 		-var="dns_enabled=true" \
+		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
@@ -57,6 +59,7 @@ terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
 		-auto-approve \
 		-var="project=${GOOGLE_PROJECT}" \
 		-var="dns_enabled=true" \
+		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
