@@ -64,6 +64,16 @@ terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
 		-var="dns_record_set_name_prefix=public" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
 
+.PHONY: mtls/init/macos/keychain
+mtls/init/macos/keychain: ## Create a new macOS keychain for Vault
+	@security create-keychain -P vault
+
+.PHONY: mtls/install/macos/keychain
+mtls/install/macos/keychain: ## Install generated CA and client certificate in the macOS keychain
+	@openssl pkcs12 -export -in vault-cli-cert.pem -inkey vault-cli-key.pem -out vault-cli.p12 -CAfile vault-ca.pem -name "Vault CLI"
+	@security import vault-cli.p12 -k $(shell realpath ~/Library/Keychains/vault-db)
+	@sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" vault-ca.pem
+
 .PHONY: mtls/proxy
 mtls/proxy: ## Runs a local mTLS terminating proxy using github.com/picatz/mtls-proxy
 	@mtls-proxy -ca-file=$(realpath vault-ca.pem) -cert-file=$(realpath vault-cli-cert.pem) -key-file=$(realpath vault-cli-key.pem) -target-addr="$(shell terraform output -raw load_balancer_ip):443" -listener-addr="127.0.0.1:8200"

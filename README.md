@@ -304,3 +304,15 @@ Key      Value
 ---      -----
 valid    true
 ```
+
+## Add Vault CA and mTLS Client Certificate to macOS Keychain
+
+Fix browser Vault UI access on macOS:
+
+```console
+$ make mtls/init/macos/keychain
+...
+$ make mtls/install/macos/keychain
+...
+$ open "$VAULT_ADDR/ui"
+```
