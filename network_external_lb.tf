@@ -26,7 +26,12 @@ resource "google_compute_backend_service" "vault" {
   health_checks         = [google_compute_health_check.vault.self_link]
 
   backend {
-    max_connections_per_instance = 10000
+    // This value used to be set, but backend services that share the same
+    // target instance group must have the same value. The optional IAP
+    // functionality uses HTTPS, which doesn't seem to support this value?
+    //
+    // max_connections_per_instance = 10000
+
     group = google_compute_region_instance_group_manager.vault.instance_group
   }
 }

@@ -14,3 +14,14 @@ resource "google_dns_managed_zone" "vault" {
   name     = "vault"
   dns_name = format("%s.", var.dns_managed_zone_dns_name)
 }
+
+resource "google_dns_record_set" "iap" {
+  count = (var.dns_enabled && var.iap_enabled) ? 1 : 0
+  name  = format("%s.%s.", "iap", var.dns_managed_zone_dns_name)
+  type  = "A"
+  ttl   = 300
+
+  managed_zone = google_dns_managed_zone.vault.0.name
+
+  rrdatas = [google_compute_global_address.vault_iap_external.0.address]
+}

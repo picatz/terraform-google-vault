@@ -13,6 +13,11 @@ resource "google_compute_region_instance_group_manager" "vault" {
     port = 8200
   }
 
+  named_port {
+    name = "vault-http-iap"
+    port = 8202
+  }
+
   version {
     instance_template = google_compute_instance_template.vault.self_link
   }

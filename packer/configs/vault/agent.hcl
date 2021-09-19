@@ -32,3 +32,10 @@ listener "tcp" {
   tls_disable_client_certs           = false
   tls_require_and_verify_client_cert = true
 }
+
+// Listener for IAP only
+listener "tcp" {
+  address                            = "{PRIVATE-IPV4}:8202"
+  tls_cert_file                      = "/vault/config/server.pem"
+  tls_key_file                       = "/vault/config/server-key.pem"
+}

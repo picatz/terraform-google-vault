@@ -110,3 +110,20 @@ variable "tls_validity_period_hours" {
   default = 17520
   description = "The total number of hours the generated mTLS certificates are valid for with a default of 2 years"
 }
+
+// TODO: consider enabling support for IAP without forcing DNS
+variable "iap_enabled" {
+  type    = string
+  default = ""
+  description = "Enable GCP Identity-Aware Proxy public endpoint access (requires DNS to also be enabled)"
+}
+
+variable "iap_client_id" {
+  type    = string
+  default = "GCP OAuth2 client ID"
+}
+
+variable "iap_client_secret" {
+  type    = string
+  default = "GCP OAuth2 client secret"
+}

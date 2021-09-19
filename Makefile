@@ -1,3 +1,10 @@
+# Makefile argument to enable IAP
+#
+# $ make terraform/apply IAP_ENABLED=true
+#
+# https://cloud.google.com/iap/docs/tutorial-gce
+IAP_ENABLED := true
+
 .PHONY: help
 help: ## Print this help menu
 help:
@@ -8,6 +15,10 @@ help:
 	@echo "* GOOGLE_APPLICATION_CREDENTIALS (${GOOGLE_APPLICATION_CREDENTIALS})"
 	@echo "* VAULT_PUBLIC_DOMAIN (${VAULT_PUBLIC_DOMAIN})"
 	@echo
+	@echo Google Cloud IAP OAuth2 environment variables:
+	@echo "* GOOGLE_CLIENT_ID (${GOOGLE_CLIENT_ID})"
+	@echo "* GOOGLE_CLIENT_SECRET (${GOOGLE_CLIENT_SECRET})"
+	@echo
 	@echo 'Usage: make <target>'
 	@echo
 	@echo 'Targets:'
@@ -15,53 +26,62 @@ help:
 
 .PHONY: packer/validate
 packer/validate: ## Validates the Packer config
-	cd packer && packer validate template.json
+	@cd packer && packer validate template.json
 
 .PHONY: packer/build
 packer/build: ## Forces a build with Packer
-	cd packer && time packer build \
+	@cd packer && time packer build \
 		-force \
 		-timestamp-ui \
 		template.json
 
 .PHONY: terraform/console
 terraform/console: ## Starts the Terraform console
-	terraform console
+	@terraform console
 
 .PHONY: terraform/validate
 terraform/validate: ## Validates the Terraform config
-	terraform validate
+	@terraform validate
 
 .PHONY: terraform/plan
 terraform/plan: ## Runs the Terraform plan command
-	terraform plan \
+	@terraform plan \
 		-var="project=${GOOGLE_PROJECT}" \
 		-var="dns_enabled=true" \
 		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
+		-var="iap_enabled=${IAP_ENABLED}" \
+		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
+		-var="iap_client_secret=${GOOGLE_CLIENT_SECRET}" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
 
 .PHONY: terraform/apply
 terraform/apply: ## Runs and auto-apporves the Terraform apply command
-	terraform apply \
+	@terraform apply \
 		-auto-approve \
 		-var="project=${GOOGLE_PROJECT}" \
 		-var="dns_enabled=true" \
 		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
+		-var="iap_enabled=${IAP_ENABLED}" \
+		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
+		-var="iap_client_secret=${GOOGLE_CLIENT_SECRET}" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
 
 .PHONY: terraform/destroy
 terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
-	terraform destroy \
+	@terraform destroy \
 		-auto-approve \
 		-var="project=${GOOGLE_PROJECT}" \
 		-var="dns_enabled=true" \
 		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
+		-var="iap_enabled=${IAP_ENABLED}" \
+		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
+		-var="iap_client_secret=${GOOGLE_CLIENT_SECRET}" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
 
 .PHONY: mtls/init/macos/keychain
