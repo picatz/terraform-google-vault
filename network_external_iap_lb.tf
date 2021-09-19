@@ -64,3 +64,17 @@ resource "google_compute_health_check" "vault_iap" {
     port = 8202
   }
 }
+
+// TODO: support other member kinds and maybe conditions?
+data "google_iam_policy" "vault_iap" {
+  binding {
+    role = "roles/iap.httpsResourceAccessor"
+    members = formatlist("user:%s", split(",", var.iap_member_emails))
+  }
+}
+
+resource "google_iap_web_backend_service_iam_policy" "vault_iap" {
+  count = (var.iap_enabled && var.dns_enabled && length(var.iap_member_emails) > 0) ? 1 : 0
+  web_backend_service = google_compute_backend_service.vault_iap.0.name
+  policy_data = data.google_iam_policy.vault_iap.policy_data
+}

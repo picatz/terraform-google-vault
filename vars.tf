@@ -127,3 +127,8 @@ variable "iap_client_secret" {
   type    = string
   default = "GCP OAuth2 client secret"
 }
+
+variable "iap_member_emails" {
+  type    = string
+  default = "IAP member emails"
+}

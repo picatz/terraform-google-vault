@@ -4,6 +4,10 @@
 #
 # https://cloud.google.com/iap/docs/tutorial-gce
 IAP_ENABLED := true
+#
+# $ make terraform/apply IAP_ENABLED=true IAP_MEMBER_EMAILS="$EMAIL_1@gmail.com,$EMAIL_2@gmail.com"
+#
+IAP_MEMBER_EMAILS := ""
 
 .PHONY: help
 help: ## Print this help menu
@@ -17,7 +21,7 @@ help:
 	@echo
 	@echo Google Cloud IAP OAuth2 environment variables:
 	@echo "* GOOGLE_CLIENT_ID (${GOOGLE_CLIENT_ID})"
-	@echo "* GOOGLE_CLIENT_SECRET (${GOOGLE_CLIENT_SECRET})"
+	@echo "* GOOGLE_CLIENT_SECRET (<sensitive>)"
 	@echo
 	@echo 'Usage: make <target>'
 	@echo
@@ -52,6 +56,7 @@ terraform/plan: ## Runs the Terraform plan command
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="iap_enabled=${IAP_ENABLED}" \
+		-var="iap_member_emails=${IAP_MEMBER_EMAILS}" \
 		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
 		-var="iap_client_secret=${GOOGLE_CLIENT_SECRET}" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
@@ -66,6 +71,7 @@ terraform/apply: ## Runs and auto-apporves the Terraform apply command
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="iap_enabled=${IAP_ENABLED}" \
+		-var="iap_member_emails=${IAP_MEMBER_EMAILS}" \
 		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
 		-var="iap_client_secret=${GOOGLE_CLIENT_SECRET}" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
@@ -80,6 +86,7 @@ terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
 		-var="iap_enabled=${IAP_ENABLED}" \
+		-var="iap_member_emails=${IAP_MEMBER_EMAILS}" \
 		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
 		-var="iap_client_secret=${GOOGLE_CLIENT_SECRET}" \
 		-var="credentials=${GOOGLE_APPLICATION_CREDENTIALS}"
