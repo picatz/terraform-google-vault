@@ -42,6 +42,8 @@ resource "google_compute_backend_service" "vault_iap" {
   port_name             = "vault-http-iap"
   health_checks         = [google_compute_health_check.vault_iap.0.self_link]
 
+  security_policy = var.cloud_armor_enabled ? google_compute_security_policy.vault.0.id : ""
+
   backend {
     group = google_compute_region_instance_group_manager.vault.instance_group
   }
