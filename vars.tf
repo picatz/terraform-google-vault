@@ -138,3 +138,13 @@ variable "cloud_armor_enabled" {
   default     = false
   description = "Enable GCP Cloud Armor"
 }
+
+variable "iap_ssl_policy_min_tls_version" {
+  type        = string
+  default     = "TLS_1_2"
+}
+
+variable "iap_ssl_policy_profile" {
+  type        = string
+  default     = "MODERN"
+}

@@ -18,6 +18,7 @@ resource "google_compute_target_https_proxy" "vault_iap" {
   name             = "vault-iap-proxy"
   url_map          = google_compute_url_map.vault_iap.0.id
   ssl_certificates = [google_compute_ssl_certificate.vault_iap.0.id]
+  ssl_policy       = google_compute_ssl_policy.vault.0.id
 }
 
 resource "google_compute_ssl_certificate" "vault_iap" {
