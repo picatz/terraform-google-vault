@@ -25,6 +25,9 @@ resource "google_compute_backend_service" "vault" {
   port_name             = "vault-http"
   health_checks         = [google_compute_health_check.vault.self_link]
 
+  // This value cannot be set for TCP backend services
+  // security_policy = var.cloud_armor_enabled ? google_compute_security_policy.vault.0.id : ""
+
   backend {
     // This value used to be set, but backend services that share the same
     // target instance group must have the same value. The optional IAP

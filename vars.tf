@@ -132,3 +132,9 @@ variable "iap_member_emails" {
   type    = string
   default = "IAP member emails"
 }
+
+variable "cloud_armor_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable GCP Cloud Armor"
+}

@@ -8,6 +8,10 @@ IAP_ENABLED := true
 # $ make terraform/apply IAP_ENABLED=true IAP_MEMBER_EMAILS="$EMAIL_1@gmail.com,$EMAIL_2@gmail.com"
 #
 IAP_MEMBER_EMAILS := ""
+#
+#
+# Makefile argument to enable Cloud Armor (only for IAP endpoint currently)
+CLOUD_ARMOR_ENABLED := false
 
 .PHONY: help
 help: ## Print this help menu
@@ -55,6 +59,7 @@ terraform/plan: ## Runs the Terraform plan command
 		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
+		-var="cloud_armor_enabled=${CLOUD_ARMOR_ENABLED}" \
 		-var="iap_enabled=${IAP_ENABLED}" \
 		-var="iap_member_emails=${IAP_MEMBER_EMAILS}" \
 		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
@@ -70,6 +75,7 @@ terraform/apply: ## Runs and auto-apporves the Terraform apply command
 		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
+		-var="cloud_armor_enabled=${CLOUD_ARMOR_ENABLED}" \
 		-var="iap_enabled=${IAP_ENABLED}" \
 		-var="iap_member_emails=${IAP_MEMBER_EMAILS}" \
 		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
@@ -85,6 +91,7 @@ terraform/destroy: ## Runs and auto-apporves the Terraform destroy command
 		-var="bucket_force_destroy=false" \
 		-var="dns_managed_zone_dns_name=${VAULT_PUBLIC_DOMAIN}" \
 		-var="dns_record_set_name_prefix=public" \
+		-var="cloud_armor_enabled=${CLOUD_ARMOR_ENABLED}" \
 		-var="iap_enabled=${IAP_ENABLED}" \
 		-var="iap_member_emails=${IAP_MEMBER_EMAILS}" \
 		-var="iap_client_id=${GOOGLE_CLIENT_ID}" \
