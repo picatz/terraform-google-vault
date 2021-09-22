@@ -215,7 +215,12 @@ $ vault write auth/oidc/config \
     default_role="gmail"
 $ vault write auth/oidc/role/gmail -<<EOF
 {
-  "allowed_redirect_uris": ["$VAULT_ADDR/ui/vault/auth/oidc/oidc/callback","http://localhost:8250/oidc/callback"],
+  "allowed_redirect_uris": [
+    "$VAULT_IAP_ADDR/ui/vault/auth/oidc/oidc/callback",
+    "$VAULT_MTLS_ADDR/ui/vault/auth/oidc/oidc/callback",
+    "http://localhost:8200/ui/vault/auth/oidc/oidc/callback",
+    "http://localhost:8250/oidc/callback"
+  ],
   "policies":"default",
   "user_claim": "sub",
   "oidc_scopes": ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
@@ -303,6 +308,55 @@ $ vault write totp/code/my-user code=886531
 Key      Value
 ---      -----
 valid    true
+```
+
+#### GCP
+
+```console
+$ vault secrets enable gcp
+$ gcloud iam service-accounts create vault-gcp-secrets-engine --display-name "Vault GCP Secrets Engine"
+$ gcloud projects add-iam-policy-binding $GOOGLE_PROJECT --member="serviceAccount:vault-gcp-secrets-engine@$GOOGLE_PROJECT.iam.gserviceaccount.com" --role="roles/iam.serviceAccountKeyAdmin"
+$ gcloud projects add-iam-policy-binding $GOOGLE_PROJECT --member="serviceAccount:vault-gcp-secrets-engine@$GOOGLE_PROJECT.iam.gserviceaccount.com" --role="roles/iam.serviceAccountTokenCreator"
+$ gcloud projects add-iam-policy-binding $GOOGLE_PROJECT --member="serviceAccount:vault-gcp-secrets-engine@$GOOGLE_PROJECT.iam.gserviceaccount.com" --role="roles/iam.securityReviewer"
+$ gcloud projects add-iam-policy-binding $GOOGLE_PROJECT --member="serviceAccount:vault-gcp-secrets-engine@$GOOGLE_PROJECT.iam.gserviceaccount.com" --role="roles/iam.securityAdmin"
+$ gcloud projects add-iam-policy-binding $GOOGLE_PROJECT --member="serviceAccount:vault-gcp-secrets-engine@$GOOGLE_PROJECT.iam.gserviceaccount.com" --role="roles/iam.serviceAccountAdmin"
+$ gcloud iam service-accounts keys create vault-gcp-secrets-engine-service-account.json --iam-account=vault-gcp-secrets-engine@$GOOGLE_PROJECT.iam.gserviceaccount.com
+$ vault write gcp/config credentials=@vault-gcp-secrets-engine-service-account.json
+$ cat monitoring_bindings.hcl
+resource "//cloudresourcemanager.googleapis.com/projects/$GOOGLE_PROJECT" {
+    roles = ["roles/logging.logWriter", "roles/monitoring.metricWriter"]
+}
+$ vault write gcp/roleset/monitoring \
+  project="$GOOGLE_PROJECT" \
+  secret_type="access_token"  \
+  token_scopes="https://www.googleapis.com/auth/cloud-platform" \
+  bindings=@monitoring_bindings.hcl
+$ vault policy write monitor policies/gcp/monitoring.hcl
+$ vault write auth/oidc/role/monitor -<<EOF
+{
+  "allowed_redirect_uris": [
+    "$VAULT_IAP_ADDR/ui/vault/auth/oidc/oidc/callback",
+    "$VAULT_MTLS_ADDR/ui/vault/auth/oidc/oidc/callback",
+    "http://localhost:8200/ui/vault/auth/oidc/oidc/callback",
+    "http://localhost:8250/oidc/callback"
+  ],
+  "policies":"monitor",
+  "user_claim": "sub",
+  "oidc_scopes": ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
+  "bound_audiences": "$OIDC_CLIENT_ID",
+  "bound_claims": {
+    "email": ["$YOUR_GMAIL_HERE@gmail.com"],
+    "email_verified": true
+  }
+}
+EOF
+$ vault login -method=oidc -role=monitor
+$ vault read gcp/roleset/monitoring/token
+Key                   Value
+---                   -----
+expires_at_seconds    1632290117
+token                 ya29...
+token_ttl             59m58s
 ```
 
 ## Add Vault CA and mTLS Client Certificate to macOS Keychain
