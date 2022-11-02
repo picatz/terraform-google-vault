@@ -257,10 +257,10 @@ Key              Value
 lease_id         nomad/creds/monitoring/78ec3ef3-c806-1022-4aa8-1dbae39c760c
 lease_duration   768h0m0s
 lease_renewable  true
-accessor_id      a71.12.0d-f5fd-1194-73df-ae9dad616307
+accessor_id      a71.12.1d-f5fd-1194-73df-ae9dad616307
 secret_id        b31fb56c-0936-5428-8c5f-ed010431aba9
-$ nomad acl token info a71.12.0d-f5fd-1194-73df-ae9dad616307
-Accessor ID  = a71.12.0d-f5fd-1194-73df-ae9dad616307
+$ nomad acl token info a71.12.1d-f5fd-1194-73df-ae9dad616307
+Accessor ID  = a71.12.1d-f5fd-1194-73df-ae9dad616307
 Secret ID    = b31fb56c-0936-5428-8c5f-ed010431aba9
 Name         = Vault example root 1505945527022465593
 Type         = client
