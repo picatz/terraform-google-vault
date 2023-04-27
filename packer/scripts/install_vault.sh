@@ -3,7 +3,7 @@
 set -ex
 
 # Latest version of Vault
-VAULT_VERSION=1.13.1
+VAULT_VERSION=1.13.2
 
 # Download Latest Version of Vault
 mkdir -p /tmp/download-vault
