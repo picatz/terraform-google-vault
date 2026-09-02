@@ -257,12 +257,12 @@ Key              Value
 lease_id         nomad/creds/monitoring/78ec3ef3-c806-1022-4aa8-1dbae39c760c
 lease_duration   768h0m0s
 lease_renewable  true
-accessor_id      a72.0.4d-f5fd-1194-73df-ae9dad616307
+accessor_id      a72.1.0d-f5fd-1194-73df-ae9dad616307
 secret_id        b31fb56c-0936-5428-8c5f-ed010431aba9
-$ nomad acl token info a72.0.4d-f5fd-1194-73df-ae9dad616307
-Accessor ID  = a72.0.4d-f5fd-1194-73df-ae9dad616307
+$ nomad acl token info a72.1.0d-f5fd-1194-73df-ae9dad616307
+Accessor ID  = a72.1.0d-f5fd-1194-73df-ae9dad616307
 Secret ID    = b31fb56c-0936-5428-8c5f-ed010431aba9
-Name         = Vault example root 150594552.0.4465593
+Name         = Vault example root 150594552.1.0465593
 Type         = client
 Global       = false
 Policies     = [readonly]
@@ -288,7 +288,7 @@ $ vault write totp/keys/my-key url="otpauth://totp/Vault:test@test.com?secret=Y6
 $ vault read totp/code/my-key
 Key     Value
 ---     -----
-code    2.0.40
+code    2.1.00
 ```
 
 To use Vault as a provider (for your own service to support TOTP):
@@ -354,7 +354,7 @@ $ vault login -method=oidc -role=monitor
 $ vault read gcp/roleset/monitoring/token
 Key                   Value
 ---                   -----
-expires_at_seconds    16322.0.47
+expires_at_seconds    16322.1.07
 token                 ya29...
 token_ttl             59m58s
 ```
